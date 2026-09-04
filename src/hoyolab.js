@@ -58,14 +58,31 @@ async function requestJson(url, options, attempts = 3) {
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Reads check-in status without claiming anything — used by dry runs. */
-export async function fetchInfo(gameCode, cookie, lang) {
+/**
+ * Reads check-in status without claiming anything — what a dry run uses.
+ * Returns the same shape as checkIn() so callers can treat the two alike.
+ * @returns {Promise<{status: 'already'|'error', message: string}>}
+ */
+export async function inspect(gameCode, cookie, lang) {
   const game = GAMES[gameCode];
   const url = new URL(game.infoUrl);
   url.searchParams.set('act_id', game.actId);
   url.searchParams.set('lang', lang);
 
-  return requestJson(url, { method: 'GET', headers: buildHeaders(game, cookie) });
+  let json;
+  try {
+    json = await requestJson(url, { method: 'GET', headers: buildHeaders(game, cookie) });
+  } catch (error) {
+    return { status: 'error', message: `Request failed: ${error.message}` };
+  }
+
+  if (json?.retcode !== 0) {
+    return { status: 'error', message: interpret(json).message };
+  }
+
+  // Always 'already': a dry run claims nothing, whatever the reported state.
+  const state = json.data.is_sign ? 'Already checked in' : 'Not checked in yet';
+  return { status: 'already', message: `${state} — streak: ${json.data.total_sign_day} day(s)` };
 }
 
 /**

@@ -19,10 +19,15 @@ run headless on a schedule.
 
 ## Setup
 
-### 1. Fork or push this repo
+### 1. Fork this repo
 
-Use a **private** repository. The cookie lives in Actions secrets, which are encrypted, but a
-private repo keeps run logs private too.
+Public or private both work. Your cookie lives in an Actions secret either way, which is
+encrypted at rest and masked if it ever reaches a log.
+
+The difference is the run logs. On a public repo anyone can read them, and they show which games
+you check in for and your streak length. That is harmless for most people, but fork private if
+you would rather not publish it. Public repos do get unlimited Actions minutes, where private
+ones draw on your monthly quota — this workflow uses about a minute a day either way.
 
 ### 2. Get your cookie
 

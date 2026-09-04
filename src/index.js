@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { GAMES, GAME_CODES } from './games.js';
-import { checkIn, fetchInfo, sleep } from './hoyolab.js';
+import { checkIn, inspect, sleep } from './hoyolab.js';
 import { notify } from './notify.js';
 
 const args = process.argv.slice(2);
@@ -79,20 +79,9 @@ async function main() {
       }
 
       const name = GAMES[code].name;
-      let result;
-
-      if (dryRun) {
-        const info = await fetchInfo(code, account.cookie, lang);
-        result = info?.retcode === 0
-          ? {
-              status: 'already',
-              message: `Dry run — signed today: ${info.data.is_sign}, ` +
-                `total days: ${info.data.total_sign_day}`,
-            }
-          : { status: 'error', message: `Dry run failed: retcode ${info?.retcode} (${info?.message})` };
-      } else {
-        result = await checkIn(code, account.cookie, lang);
-      }
+      const result = dryRun
+        ? await inspect(code, account.cookie, lang)
+        : await checkIn(code, account.cookie, lang);
 
       console.log(`[${account.label}] ${name}: ${result.message}`);
       results.push({ account: account.label, game: name, ...result });
