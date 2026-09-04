@@ -28,7 +28,7 @@ jobs:
       STALE_AFTER_DAYS: 45
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Push an empty commit if the repository has gone quiet
         run: |
