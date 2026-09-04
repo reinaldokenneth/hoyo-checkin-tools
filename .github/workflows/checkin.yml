@@ -2,11 +2,10 @@ name: Daily check-in
 
 on:
   schedule:
-    # Daily at 16:00 UTC = 23:00 UTC+7 (Jakarta). That is the exact moment the
-    # HoYoLAB day rolls over at 00:00 UTC+8, so the run relies on JITTER_SECONDS
-    # below to land a few minutes into the new day rather than at its boundary.
-    # Cron is always UTC and ignores DST.
-    - cron: '0 16 * * *'
+    # Daily at 11:00 UTC = 18:00 UTC+7 (Jakarta), which is 19:00 UTC+8. That
+    # leaves five hours before the HoYoLAB day rolls over at 00:00 UTC+8, so a
+    # late run still claims the right day. Cron is always UTC and ignores DST.
+    - cron: '0 11 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
