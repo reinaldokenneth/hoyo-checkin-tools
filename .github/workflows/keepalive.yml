@@ -1,0 +1,49 @@
+# GitHub disables a repository's scheduled workflows after 60 days without any
+# repository activity, which would silently stop the daily check-in. This job
+# pushes an empty commit once the repo has been quiet long enough to be at risk,
+# resetting that clock.
+name: Keepalive
+
+on:
+  schedule:
+    # Weekly, Mondays at 03:30 UTC. Only the runs that find a stale repo commit.
+    - cron: '30 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hoyolab-keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    env:
+      # Commit once the newest commit is this old. Comfortably under GitHub's
+      # 60-day limit, while leaving normal pushes to reset the clock for free.
+      STALE_AFTER_DAYS: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Push an empty commit if the repository has gone quiet
+        run: |
+          set -euo pipefail
+
+          age_days=$(( ( $(date +%s) - $(git log -1 --format=%ct) ) / 86400 ))
+          echo "Newest commit is ${age_days} day(s) old (threshold: ${STALE_AFTER_DAYS})."
+
+          if [ "$age_days" -lt "$STALE_AFTER_DAYS" ]; then
+            echo "Repository is still active — nothing to do."
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit --allow-empty -m 'chore: keepalive to keep scheduled workflows enabled'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "Pushed a keepalive commit."

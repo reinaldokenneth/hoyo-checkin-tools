@@ -1,0 +1,45 @@
+name: Daily check-in
+
+on:
+  schedule:
+    # 16:10 UTC = 00:10 UTC+8, just after the HoYoLAB server day rolls over.
+    - cron: '10 16 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only read check-in status, claim nothing'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hoyolab-checkin
+  cancel-in-progress: false
+
+jobs:
+  checkin:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check in
+        env:
+          HOYOLAB_COOKIE: ${{ secrets.HOYOLAB_COOKIE }}
+          HOYOLAB_GAMES: ${{ vars.HOYOLAB_GAMES || secrets.HOYOLAB_GAMES }}
+          HOYOLAB_LANG: ${{ vars.HOYOLAB_LANG }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_USER_ID: ${{ secrets.DISCORD_USER_ID }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Scheduled runs queue up at the top of the minute across all of
+          # GitHub; spread ours over the following half hour.
+          JITTER_SECONDS: ${{ github.event_name == 'schedule' && '1800' || '0' }}
+        run: node src/index.js ${{ inputs.dry_run && '--dry-run' || '' }}

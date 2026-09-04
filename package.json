@@ -1,0 +1,16 @@
+{
+  "name": "hoyo-checkin-tools",
+  "version": "1.0.0",
+  "description": "Automated HoYoLAB daily check-in for Hoyoverse games, run once a day by GitHub Actions",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --env-file=.env src/index.js",
+    "dry-run": "node --env-file=.env src/index.js --dry-run"
+  },
+  "license": "MIT"
+}
