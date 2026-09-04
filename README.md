@@ -110,14 +110,19 @@ node src/index.js gi hsr
 
 ## Schedule
 
-The workflow runs daily at `0 11 * * *`, which is 11:00 UTC, or 18:00 in UTC+7. Each scheduled
-run then waits a random 0 to 30 minutes before firing, so it lands between 18:00 and 18:30.
+The workflow runs daily at `0 0 * * *`, which is midnight UTC, or 07:00 in UTC+7. Each scheduled
+run then waits a random 0 to 30 minutes before firing, so it lands between 07:00 and 07:30.
 
-The HoYoLAB check-in day runs on UTC+8 and rolls over at 16:00 UTC. An 18:00 run therefore sits
-well inside the current day, with five hours of margin left. That matters because GitHub queues
-scheduled jobs and can delay one by an hour or more under load, and because a run landing on the
-rollover itself risks claiming the day that is ending and skipping the one beginning. Any time
-between roughly 01:00 and 22:00 in UTC+8 avoids that edge.
+The HoYoLAB check-in day runs on UTC+8 and rolls over at 16:00 UTC. A 07:00 run sits eight hours
+into that day with sixteen hours still to go, which is about as much slack as the schedule can
+have. That margin matters because GitHub queues scheduled jobs and can delay one by an hour or
+more under load, and because a run landing on the rollover itself risks claiming the day that is
+ending and skipping the one beginning. Any time between roughly 01:00 and 22:00 in UTC+8 avoids
+that edge.
+
+Midnight UTC is the single most requested cron slot on GitHub, so expect this one to be delayed
+more often than a time off the hour would be. It is harmless here given the margin, but if you
+want the run to land closer to when it is asked for, move the minute field off zero.
 
 Edit the `cron` line in [checkin.yml](.github/workflows/checkin.yml) to move it, remembering that
 cron is always in UTC and never adjusts for daylight saving.

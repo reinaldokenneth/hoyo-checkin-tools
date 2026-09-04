@@ -2,10 +2,12 @@ name: Daily check-in
 
 on:
   schedule:
-    # Daily at 11:00 UTC = 18:00 UTC+7 (Jakarta), which is 19:00 UTC+8. That
-    # leaves five hours before the HoYoLAB day rolls over at 00:00 UTC+8, so a
-    # late run still claims the right day. Cron is always UTC and ignores DST.
-    - cron: '0 11 * * *'
+    # Daily at 00:00 UTC = 07:00 UTC+7 (Jakarta), which is 08:00 UTC+8. That
+    # leaves sixteen hours before the HoYoLAB day rolls over at 00:00 UTC+8, so
+    # even a badly delayed run claims the right day. Midnight UTC is the busiest
+    # slot on GitHub's scheduler, and JITTER_SECONDS below absorbs some of that.
+    # Cron is always UTC and ignores DST.
+    - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
