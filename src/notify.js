@@ -10,7 +10,7 @@ function render(results) {
 
 async function sendDiscord(webhook, results, mentionUserId) {
   if (!webhook.startsWith('https://discord.com/api/webhooks/')) {
-    console.error('DISCORD_WEBHOOK is not a Discord webhook URL — skipping');
+    console.error('DISCORD_WEBHOOK is not a Discord webhook URL, skipping');
     return;
   }
 
@@ -26,7 +26,7 @@ async function sendDiscord(webhook, results, mentionUserId) {
 
 async function sendTelegram(token, chatId, results) {
   if (!chatId) {
-    console.error('TELEGRAM_TOKEN is set but TELEGRAM_CHAT_ID is missing — skipping');
+    console.error('TELEGRAM_TOKEN is set but TELEGRAM_CHAT_ID is missing, skipping');
     return;
   }
 

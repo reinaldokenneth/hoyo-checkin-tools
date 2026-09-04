@@ -48,7 +48,7 @@ function validateCookie(cookie) {
   const missing = ['ltoken_v2', 'ltuid_v2'].filter((key) => !cookie.includes(`${key}=`));
   return missing.length === 0
     ? null
-    : `Cookie is missing ${missing.join(' and ')} — it will almost certainly be rejected`;
+    : `Cookie is missing ${missing.join(' and ')}, so it will almost certainly be rejected`;
 }
 
 async function main() {

@@ -1,7 +1,7 @@
 # Hoyo Check-in Tools
 
 Claims your HoYoLAB daily check-in rewards once a day, automatically, using GitHub Actions.
-No server, no browser, no dependencies — just a scheduled workflow and one cookie.
+No server, no browser, no dependencies: just a scheduled workflow and one cookie.
 
 Inspired by [gorden0929/hoyotools](https://github.com/gorden0929/hoyotools), which does the
 same job as a Chrome extension. This version calls the HoYoLAB endpoints directly so it can
@@ -27,7 +27,7 @@ encrypted at rest and masked if it ever reaches a log.
 The difference is the run logs. On a public repo anyone can read them, and they show which games
 you check in for and your streak length. That is harmless for most people, but fork private if
 you would rather not publish it. Public repos do get unlimited Actions minutes, where private
-ones draw on your monthly quota — this workflow uses about a minute a day either way.
+ones draw on your monthly quota. This workflow uses about a minute a day either way.
 
 ### 2. Get your cookie
 
@@ -40,7 +40,7 @@ ones draw on your monthly quota — this workflow uses about a minute a day eith
    ltoken_v2=v2_XXXXXXXXXXXXXXXX; ltuid_v2=123456789
    ```
 
-> Treat this like a password — it is a login session for your HoYoverse account. Logging out of
+> Treat this like a password. It is a login session for your HoYoverse account. Logging out of
 > HoYoLAB in that browser invalidates it, so log in via a private window and just close the
 > window instead of logging out.
 
@@ -68,7 +68,7 @@ Then on the **Variables** tab of the same page:
 Actions are disabled on new forks. Open the **Actions** tab and enable workflows, then run
 **Daily check-in → Run workflow** with **dry run** ticked. A dry run reads your check-in status
 without claiming anything, so it verifies the cookie safely. If it reports your total sign-in
-days, you are set — the schedule takes over from there.
+days, you are set, and the schedule takes over from there.
 
 ## Multiple accounts
 
@@ -110,14 +110,14 @@ node src/index.js gi hsr
 
 ## Schedule
 
-The workflow runs at `10 16 * * *` (16:10 UTC), which is 00:10 in UTC+8 — the timezone the
+The workflow runs at `10 16 * * *` (16:10 UTC), which is 00:10 in UTC+8, the timezone the
 HoYoLAB check-in day rolls over on. Each scheduled run then waits a random 0–30 minutes before
 firing. Edit the `cron` line in [checkin.yml](.github/workflows/checkin.yml) to move it.
 
 Two things worth knowing about GitHub's scheduler:
 
 - Scheduled runs are queued, not guaranteed on time. Delays of an hour happen under load, which
-  is fine here — you only need one run per day.
+  is fine here, since you only need one run per day.
 - **GitHub disables scheduled workflows after 60 days without repository activity.** A second
   workflow, [keepalive.yml](.github/workflows/keepalive.yml), prevents this: it checks weekly and,
   once the newest commit is 45 days old, pushes an empty commit to reset the clock. Normal pushes
@@ -135,7 +135,7 @@ Two things worth knowing about GitHub's scheduler:
 | `Cookie is invalid or expired` | Repeat step 2. Logging out of HoYoLAB kills the cookie. |
 | `No account for this game` | That game code has no character bound to this HoYoLAB account. Remove it from `HOYOLAB_GAMES`. |
 | `Captcha challenge triggered` | HoYoLAB wants a human. Check in once manually on the website, then let the schedule resume. |
-| `Already checked in today` | Not an error — the run succeeded, someone (or an earlier run) already claimed today. |
+| `Already checked in today` | Not an error. The run succeeded, and someone (or an earlier run) already claimed today. |
 
 ## How it works
 
@@ -145,7 +145,7 @@ translates HoYoLAB's `retcode` into a result. [`src/index.js`](src/index.js) wal
 account × game pair, and [`src/notify.js`](src/notify.js) sends the summary onward.
 
 HoYoLAB reports failures with HTTP 200 and a negative `retcode` in the body, so the status code
-alone tells you nothing — every response is parsed.
+alone tells you nothing, so every response is parsed.
 
 ## Disclaimer
 

@@ -59,7 +59,7 @@ async function requestJson(url, options, attempts = 3) {
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Reads check-in status without claiming anything — what a dry run uses.
+ * Reads check-in status without claiming anything, which is what a dry run uses.
  * Returns the same shape as checkIn() so callers can treat the two alike.
  * @returns {Promise<{status: 'already'|'error', message: string}>}
  */
@@ -82,7 +82,7 @@ export async function inspect(gameCode, cookie, lang) {
 
   // Always 'already': a dry run claims nothing, whatever the reported state.
   const state = json.data.is_sign ? 'Already checked in' : 'Not checked in yet';
-  return { status: 'already', message: `${state} — streak: ${json.data.total_sign_day} day(s)` };
+  return { status: 'already', message: `${state}, streak: ${json.data.total_sign_day} day(s)` };
 }
 
 /**
@@ -121,7 +121,7 @@ function interpret(json) {
   if (retcode === '0' && (risk?.is_risk === true || risk?.risk_code === 5001)) {
     return {
       status: 'error',
-      message: 'Captcha challenge triggered — check in manually once to clear it',
+      message: 'Captcha challenge triggered. Check in manually once to clear it',
     };
   }
 
@@ -132,7 +132,7 @@ function interpret(json) {
       return { status: 'already', message: 'Already checked in today' };
     case '-100':
     case '10001':
-      return { status: 'error', message: 'Cookie is invalid or expired — refresh it' };
+      return { status: 'error', message: 'Cookie is invalid or expired. Refresh it' };
     case '-10002':
       return { status: 'error', message: 'No account for this game (never played it?)' };
     default:

@@ -38,7 +38,7 @@ jobs:
           echo "Newest commit is ${age_days} day(s) old (threshold: ${STALE_AFTER_DAYS})."
 
           if [ "$age_days" -lt "$STALE_AFTER_DAYS" ]; then
-            echo "Repository is still active — nothing to do."
+            echo "Repository is still active, nothing to do."
             exit 0
           fi
 
