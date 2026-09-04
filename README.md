@@ -110,9 +110,14 @@ node src/index.js gi hsr
 
 ## Schedule
 
-The workflow runs at `10 16 * * *` (16:10 UTC), which is 00:10 in UTC+8, the timezone the
-HoYoLAB check-in day rolls over on. Each scheduled run then waits a random 0–30 minutes before
-firing. Edit the `cron` line in [checkin.yml](.github/workflows/checkin.yml) to move it.
+The workflow runs at `0 23 * * *`, which is 23:00 UTC, or 06:00 the next morning in UTC+7.
+Each scheduled run then waits a random 0 to 30 minutes before firing, so it lands between 06:00
+and 06:30.
+
+The check-in day itself rolls over at 00:00 in UTC+8, an hour ahead of Jakarta, so a 06:00 run
+sits seven hours into the new day with plenty of margin. Edit the `cron` line in
+[checkin.yml](.github/workflows/checkin.yml) to move it, remembering that cron is always in UTC
+and never adjusts for daylight saving.
 
 Two things worth knowing about GitHub's scheduler:
 

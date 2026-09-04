@@ -2,8 +2,9 @@ name: Daily check-in
 
 on:
   schedule:
-    # 16:10 UTC = 00:10 UTC+8, just after the HoYoLAB server day rolls over.
-    - cron: '10 16 * * *'
+    # 23:00 UTC = 06:00 UTC+7 (Jakarta), seven hours after the HoYoLAB day
+    # rolls over at 00:00 UTC+8. Cron is always UTC and ignores DST.
+    - cron: '0 23 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
